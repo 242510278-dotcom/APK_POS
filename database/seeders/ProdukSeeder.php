@@ -1,17 +1,31 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\Produk;
+
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ProdukSeeder extends Seeder
+class DatabaseSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     /**
-     * Run the database seeds.
+     * Seed the application's database.
      */
     public function run(): void
     {
-        Produk::factory()->count(100)->create();
+        $this->call([
+            RoleSeeder::class,
+            UserSeeder::class,
+            ProdukSeeder::class, 
+            PenjualanSeeder::class,
+        ]);
+
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
     }
 }
+
