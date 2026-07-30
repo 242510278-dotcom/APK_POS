@@ -1,56 +1,55 @@
-@csrf
+<!-- Tambahkan pembungkus tag <form> di paling atas -->
+<form action="{{ route('produk.store') }}" method="POST" enctype="multipart/form-data">
+    
+    @csrf  <!-- Cukup tulis @csrf sekali saja di sini -->
 
-{{-- Tampilkan foto lama jika sedang Edit --}}
-@if (isset($produk) && $produk->foto)
-    <div class="mb-3">
-        <label class="form-label">Foto Saat Ini</label><br>
-        <img src="{{ asset('storage/' . $produk->foto) }}"
-             width="150"
-             class="img-thumbnail">
+    @if (!empty($produk->foto))
+        <div class="mb-2">
+            <label>Foto Saat Ini</label><br>
+            <img src="{{ asset('storage/'. $produk->foto) }}" width="150" class="img-thumbnail">
+        </div>
+    @endif
+
+    <div class="row">
+        <div class="col">
+            <div>
+                <label>Gambar</label>
+                <input type="file" 
+                       name="foto" 
+                       onchange="previewImage(this)"
+                       class="form-control @error('foto') is-invalid @enderror">
+                @error('foto')
+                    <div class="invalid-feedback d-block">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        </div>
+        <div class="mb-2">
+            <label></label><br>
+            <img id="preview" class="img-thumbnail mt-2" style="display:none" width="150">
+        </div>
     </div>
-@endif
 
-<div class="row mb-3">
-    <div class="col-md-6">
-        <label class="form-label">Gambar</label>
-        <input type="file"
-               name="foto"
-               class="form-control @error('foto') is-invalid @enderror"
-               onchange="previewImage(this)">
-
-        @error('foto')
-            <div class="invalid-feedback d-block">
+    <!-- Nama Produk -->
+    <div>
+        <label>Nama Produk</label><br>
+        <input type="text" name="name"
+               class="form-control @error('name') is-invalid @enderror"
+               value="{{ old('name', $produk->nama ?? '') }}">
+        @error('name')
+            <div class="invalid-feedback">
                 {{ $message }}
             </div>
         @enderror
     </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Preview Foto Baru</label><br>
-        <img id="preview" class="img-thumbnail" style="display:none" width="150">
-    </div>
-</div>
-
-<div class="mb-3">
-    <label class="form-label">Nama Produk</label>
-    <input type="text" name="name"
-           class="form-control @error('name') is-invalid @enderror"
-           value="{{ old('name', $produk->nama ?? '') }}">
-
-    @error('name')
-        <div class="invalid-feedback">
-            {{ $message }}
-        </div>
-    @enderror
-</div>
-
-<div class="row mb-3">
-    <div class="col-md-6">
-        <label class="form-label">Harga Beli</label>
+    <!-- Harga Beli -->
+    <div>
+        <label>Harga Beli</label><br>
         <input type="number" name="purchase_price"
                class="form-control @error('purchase_price') is-invalid @enderror"
                value="{{ old('purchase_price', $produk->harga_beli ?? '') }}">
-
         @error('purchase_price')
             <div class="invalid-feedback">
                 {{ $message }}
@@ -58,35 +57,36 @@
         @enderror
     </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Harga Jual</label>
+    <!-- Harga Jual -->
+    <div>
+        <label>Harga Jual</label><br>
         <input type="number" name="selling_price"
                class="form-control @error('selling_price') is-invalid @enderror"
                value="{{ old('selling_price', $produk->harga_jual ?? '') }}">
-
         @error('selling_price')
             <div class="invalid-feedback">
                 {{ $message }}
             </div>
         @enderror
     </div>
-</div>
 
-<div class="mb-3">
-    <label class="form-label">Stok</label>
-    <input type="number" name="stock"
-           class="form-control @error('stock') is-invalid @enderror"
-           value="{{ old('stock', $produk->stok ?? '') }}">
+    <!-- Stok -->
+    <div>
+        <label>Stok</label><br>
+        <input type="number" name="stock"
+               class="form-control @error('stock') is-invalid @enderror"
+               value="{{ old('stock', $produk->stok ?? '') }}">
+        @error('stock')
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
+        @enderror
+    </div>
 
-    @error('stock')
-        <div class="invalid-feedback">
-            {{ $message }}
-        </div>
-    @enderror
-</div>
+    <button class="btn btn-success mt-3" type="submit">Simpan</button>
+    <a href="{{ route('produk.index') }}" class="btn btn-secondary mt-3">Kembali</a>
 
-<button class="btn btn-success mt-2" type="submit">Simpan</button>
-<a href="{{ route('produk.index') }}" class="btn btn-secondary mt-2">Kembali</a>
+</form> <!-- Tutup tag </form> di bawah tombol -->
 
 <script>
 function previewImage(input) {
@@ -96,8 +96,6 @@ function previewImage(input) {
     if (file) {
         preview.src = URL.createObjectURL(file);
         preview.style.display = 'block';
-    } else {
-        preview.style.display = 'none';
     }
 }
 </script>
