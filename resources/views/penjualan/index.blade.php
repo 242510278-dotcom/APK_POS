@@ -3,6 +3,7 @@
 @section('title', 'Halaman Penjualan')
 
 @section('content')
+@include('layouts.navbar')
 <div class="container py-4">
 
     {{-- Header Section --}}
