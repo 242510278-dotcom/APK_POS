@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Users')
+@section('title', 'Data Jenis')
 
 @section('content')
 @include('layouts.navbar')
@@ -70,15 +70,6 @@
         font-weight: 600;
         padding: 0.35em 0.75em;
         border-radius: var(--border-radius-md);
-    }
-
-    .badge-role {
-        background-color: #4b5563;
-        color: #ffffff;
-        font-weight: 500;
-        padding: 0.4em 0.8em;
-        border-radius: var(--border-radius-md);
-        font-size: 0.8rem;
     }
 
     .btn-custom-primary {
@@ -157,26 +148,24 @@
     <!-- Header Banner -->
     <div class="hero-header p-4 p-md-5 mb-4 text-white d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
-            <h2 class="fw-bold mb-1 text-white">Halaman Users</h2>
-            <p class="mb-0 text-gray-300 fs-6" style="color: #d1d5db;">Kelola data pengguna dan hak akses sistem dalam satu tempat.</p>
+            <h2 class="fw-bold mb-1 text-white">Data Jenis</h2>
+            <p class="mb-0 fs-6" style="color: #d1d5db;">Kelola kategori dan klasifikasi data Anda dalam satu tempat.</p>
         </div>
 
-        <a href="{{ route('admin.users.create') }}" class="btn btn-custom-primary btn-lg px-4 d-inline-flex align-items-center gap-2 rounded-3">
-            <i class="bi bi-person-plus-fill text-dark"></i>
-            <span>Tambah User</span>
+        <a href="{{ route('jenis.create') }}" class="btn btn-custom-primary btn-lg px-4 d-inline-flex align-items-center gap-2 rounded-3">
+            <i class="bi bi-plus-circle-fill text-dark"></i>
+            <span>Tambah Jenis</span>
         </a>
     </div>
 
     <!-- Alert Success -->
-    @if (session('success'))
-        <div class="alert alert-secondary border-0 fade show shadow-sm rounded-3 mb-4 p-3 text-dark" role="alert" style="background-color: #e5e7eb;">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-check-circle-fill text-dark fs-5"></i>
-                    <div>{{ session('success') }}</div>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    @if(session('success'))
+        <div class="alert alert-secondary border-0 fade show shadow-sm rounded-3 mb-4 p-3 text-dark d-flex justify-content-between align-items-center" role="alert" style="background-color: #e5e7eb;">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill text-dark fs-5"></i>
+                <div>{{ session('success') }}</div>
             </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
@@ -184,32 +173,16 @@
     <div class="card table-card overflow-hidden">
         <div class="p-3 p-md-4 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 bg-white">
             <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-people-fill text-secondary fs-5"></i>
-                <h5 class="fw-bold mb-0 text-dark">Daftar Pengguna</h5>
+                <i class="bi bi-tags-fill text-secondary fs-5"></i>
+                <h5 class="fw-bold mb-0 text-dark">Daftar Jenis</h5>
             </div>
             
             <!-- Search Bar Area -->
-            <div class="col-12 col-md-5">
-                <form action="{{ route('admin.users') }}" method="GET">
-                    <div class="input-group">
-                        <span class="input-group-text border-end-0 form-control-grey"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" 
-                               name="search" 
-                               value="{{ request('search') }}" 
-                               class="form-control form-control-grey border-start-0" 
-                               placeholder="Cari nama atau email...">
-                        
-                        <button class="btn btn-action-edit border-start-0 px-3" type="submit">
-                            Cari
-                        </button>
-
-                        @if(request('search'))
-                            <a href="{{ route('admin.users') }}" class="btn btn-outline-secondary px-3 d-flex align-items-center">
-                                Reset
-                            </a>
-                        @endif
-                    </div>
-                </form>
+            <div class="col-12 col-md-4">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text border-end-0 form-control-grey"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control form-control-grey border-start-0" placeholder="Cari data jenis...">
+                </div>
             </div>
         </div>
 
@@ -219,50 +192,47 @@
                 <thead>
                     <tr>
                         <th scope="col" class="ps-4 text-center" style="width: 8%">No</th>
-                        <th scope="col" style="width: 27%">Nama</th>
-                        <th scope="col" style="width: 30%">Email</th>
-                        <th scope="col" class="text-center" style="width: 15%">Role</th>
+                        <th scope="col" style="width: 32%">Nama Jenis</th>
+                        <th scope="col" style="width: 40%">Keterangan</th>
                         <th scope="col" class="pe-4 text-center" style="width: 20%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($users as $user)
+                    @forelse($jenis as $item)
                         <tr>
                             <td class="ps-4 text-center">
-                                <span class="badge-id fs-7">{{ $users->firstItem() + $loop->index }}</span>
+                                <span class="badge-id fs-7">
+                                    {{ method_exists($jenis, 'firstItem') ? $jenis->firstItem() + $loop->index : $loop->iteration }}
+                                </span>
                             </td>
 
                             <td>
-                                <span class="fw-semibold text-dark fs-6">{{ $user->name }}</span>
+                                <span class="fw-semibold text-dark fs-6">{{ $item->nama_jenis }}</span>
                             </td>
 
                             <td>
-                                <span class="text-secondary small">{{ $user->email }}</span>
-                            </td>
-
-                            <td class="text-center">
-                                <span class="badge badge-role">
-                                    {{ $user->role->name ?? '-' }}
+                                <span class="text-secondary small">
+                                    {{ $item->keterangan ?? '-' }}
                                 </span>
                             </td>
 
                             <td class="pe-4 text-center">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('admin.users.edit', $user) }}" 
+                                    <a href="{{ route('jenis.edit', $item->id) }}" 
                                        class="btn btn-action-edit btn-sm px-3 rounded-2 d-inline-flex align-items-center gap-1"
                                        title="Edit Data">
                                         <i class="bi bi-pencil-square"></i>
                                         <span>Edit</span>
                                     </a>
 
-                                    <form action="{{ route('admin.users.destroy', $user) }}" 
+                                    <form action="{{ route('jenis.destroy', $item->id) }}" 
                                           method="POST" 
                                           class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
                                                 class="btn btn-action-delete btn-sm px-3 rounded-2 d-inline-flex align-items-center gap-1"
-                                                onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus jenis ini?')"
                                                 title="Hapus Data">
                                             <i class="bi bi-trash"></i>
                                             <span>Hapus</span>
@@ -273,13 +243,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-5">
+                            <td colspan="4" class="text-center py-5">
                                 <div class="py-4">
                                     <div class="empty-state-icon mb-3">
-                                        <i class="bi bi-person-x fs-2"></i>
+                                        <i class="bi bi-tags fs-2"></i>
                                     </div>
-                                    <h5 class="fw-semibold text-dark mb-1">Data User Tidak Ditemukan</h5>
-                                    <p class="text-muted small mb-0">Coba ubah kata kunci pencarian atau tambah pengguna baru.</p>
+                                    <h5 class="fw-semibold text-dark mb-1">Belum Ada Data</h5>
+                                    <p class="text-muted small mb-0">Data jenis yang dimasukkan akan tampil secara otomatis di sini.</p>
                                 </div>
                             </td>
                         </tr>
@@ -289,9 +259,9 @@
         </div>
 
         <!-- Pagination Footer -->
-        @if($users->hasPages())
+        @if(method_exists($jenis, 'hasPages') && $jenis->hasPages())
             <div class="p-3 border-top d-flex justify-content-end bg-light">
-                {{ $users->links() }}
+                {{ $jenis->links() }}
             </div>
         @endif
     </div>
