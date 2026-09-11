@@ -169,7 +169,7 @@
                     </select>
 
                     <button class="btn btn-success w-100 {{ $sale->status === 'COMPLETED' ? 'disabled' : ''}}">
-                        Checkout
+                        Bayar
                     </button>
                 </form>
                         @can('delete', $sale)
