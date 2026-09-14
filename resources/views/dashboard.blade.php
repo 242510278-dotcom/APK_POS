@@ -44,9 +44,10 @@
     <!-- Header Section -->
     <div class="row mb-5 text-center">
         <div class="col-12">
-            <span class="badge bg-secondary text-white px-3 py-2 mb-2 rounded-pill shadow-sm small">
-                Overview Panel
-            </span>
+            <span class="badge bg-success-subtle text-success px-3 py-2 mb-2 rounded-pill shadow-sm small">
+    Overview Panel
+</span>
+
             <h1 class="fw-bold text-dark display-6 mb-1">
                 Ringkasan Hari Ini
             </h1>
@@ -63,9 +64,9 @@
             <h3 class="h5 fw-bold text-dark mb-0 me-3">Today's Sales</h3>
             <div class="flex-grow-1 header-divider"></div>
         </div>
-        
+
         <div class="row g-4 mt-1">
-            <div class="col-md-6"> 
+            <div class="col-md-6">
                 <div class="card card-slate border-accent-dark shadow-sm h-100">
                     <div class="card-body p-4">
                         <span class="text-uppercase text-muted fw-bold small tracking-wide">Total Nilai Penjualan</span>

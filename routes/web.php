@@ -7,7 +7,7 @@ use App\Http\Controllers\ItemPenjualanController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\JenisController; // 1. Tambahkan Controller Jenis di sini
+use App\Http\Controllers\JenisController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
@@ -39,8 +39,14 @@ Route::middleware('auth')->group(function () {
         Route::resource('/produk', ProdukController::class);
         Route::resource('/penjualan', PenjualanController::class);
         Route::resource('/itempenjualan', ItemPenjualanController::class);
-       Route::resource('jenis', JenisController::class)->parameters([
-    'jenis' => 'jenis'
-]);
+
+        Route::resource('jenis', JenisController::class)->parameters([
+            'jenis' => 'jenis'
+        ]);
+
+        // Rute baru diletakkan di sini (berdiri sendiri di dalam grup admin,kasir)
+        Route::get('/toko-sendi', function () {
+            return view('toko_sendi');
+        })->name('toko.sendi');
     });
 });
