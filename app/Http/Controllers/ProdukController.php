@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\Produk\StoreRequest;
 use App\Http\Requests\Produk\UpdateRequest;
 use App\Http\Requests\SearchRequest;
 use App\Models\Produk;
-use Illuminate\Http\Requests;
+use Illuminate\Http\Request; // Diperbaiki dari Illuminate\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
 
 class ProdukController extends Controller
 {
@@ -18,20 +18,19 @@ class ProdukController extends Controller
     public function index(SearchRequest $request)
     {
         $this->authorize('viewAny', Produk::class);
-       $keyword = $request->input('search');
+        $keyword = $request->input('search');
 
-if ($keyword) {
-    $products = Produk::when($keyword, function ($query) use ($keyword) {
-        $query->where('nama', 'like', '%' . $keyword . '%');
-    })
-    ->orderBy('nama')
-    ->paginate(10)
-    ->withQueryString();
-} else { 
-       $products = Produk::latest()->paginate(10)->withQueryString();
-}
+        if ($keyword) {
+            $products = Produk::when($keyword, function ($query) use ($keyword) {
+                $query->where('nama', 'like', '%' . $keyword . '%');
+            })
+            ->orderBy('nama')
+            ->paginate(10)
+            ->withQueryString();
+        } else {
+            $products = Produk::latest()->paginate(10)->withQueryString();
+        }
         return view('produk.index', compact('products'));
- 
     }
 
     /**
@@ -58,14 +57,13 @@ if ($keyword) {
         $data['harga_jual'] = $dataReq['selling_price'];
         $data['stok'] = $dataReq['stock'] ?? true;
 
-    if ($request->hasFile('foto')) {
-        $data['foto'] = $request->file('foto')->store('products', 'public');
-    }
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('products', 'public');
+        }
 
-    Produk::create($data);
+        Produk::create($data);
 
-    return redirect()->route('produk.index')->with('success', 'Product created successfully.');
-
+        return redirect()->route('produk.index')->with('success', 'Product created successfully.');
     }
 
     /**
@@ -73,7 +71,14 @@ if ($keyword) {
      */
     public function show(string $id)
     {
-        //
+        // Mencari produk, jika tidak ada langsung memunculkan halaman error 404
+        $produk = Produk::findOrFail($id);
+
+        // Aktifkan baris di bawah jika Anda menggunakan Policy untuk melihat detail
+        // $this->authorize('view', $produk);
+
+        // Mengembalikan tampilan ke resources/views/produk/show.blade.php
+        return view('produk.show', compact('produk'));
     }
 
     /**
@@ -93,52 +98,42 @@ if ($keyword) {
         $this->authorize('update', $produk);
         $dataReq = $request->validated();
 
-$data = [
-    'user_id'    => Auth::id(),
-    'nama'       => $dataReq['name'],
-    'harga_beli' => $dataReq['purchase_price'],
-    'harga_jual' => $dataReq['selling_price'],
-    'stok'       => $dataReq['stock'],
-];
+        $data = [
+            'user_id'    => Auth::id(),
+            'nama'       => $dataReq['name'],
+            'harga_beli' => $dataReq['purchase_price'],
+            'harga_jual' => $dataReq['selling_price'],
+            'stok'       => $dataReq['stock'],
+        ];
 
+        if ($request->hasFile('foto')) {
+            if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
+                Storage::disk('public')->delete($produk->foto);
+            }
+            $data['foto'] = $request->file('foto')->store('products', 'public');
+        }
 
-if ($request->hasFile('foto')) {
+        $produk->update($data);
 
-   
-    if (
-        $produk->foto &&
-        Storage::disk('public')->exists($produk->foto)
-    ) {
-        Storage::disk('public')->delete($produk->foto);
-    }
-
-
-    $data['foto'] = $request->file('foto')->store('products', 'public');
-}
-
-$produk->update($data);
-
-return redirect()
-    ->route('produk.edit', $produk->id)
-    ->with('success', 'Product updated successfully.');
-
+        return redirect()
+            ->route('produk.edit', $produk->id)
+            ->with('success', 'Product updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Produk $produk) 
+    public function destroy(Produk $produk)
     {
         $this->authorize('delete', $produk);
-       if ($produk->foto) {
-    Storage::disk('public')->delete($produk->foto);
-}
+        if ($produk->foto) {
+            Storage::disk('public')->delete($produk->foto);
+        }
 
-$produk->delete();
+        $produk->delete();
 
-return redirect()
-    ->route('produk.index')
-    ->with('success', 'Product deleted successfully.');
- 
+        return redirect()
+            ->route('produk.index')
+            ->with('success', 'Product deleted successfully.');
     }
 }
